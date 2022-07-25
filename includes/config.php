@@ -254,11 +254,6 @@ $defaults['blockSupports'] = [
 $defaults['blockStyles']['register'] = [];
 $defaults['blockStyles']['unregister'] = [];
 
-$defaults['darkMode'] = [
-	'black' => 'white',
-	'white' => 'black',
-];
-
 $defaults['blocks'] = [
 	'accordion',
 	'breadcrumbs',

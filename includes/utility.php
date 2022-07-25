@@ -10,10 +10,13 @@ use function apply_filters;
 use function array_key_exists;
 use function array_merge_recursive;
 use function array_values;
+use function basename;
 use function defined;
+use function dirname;
 use function explode;
 use function file_exists;
 use function filemtime;
+use function get_template_directory_uri;
 use function get_theme_support;
 use function in_array;
 use function implode;
@@ -29,6 +32,7 @@ use function str_replace;
 use function trim;
 use function wp_enqueue_script;
 use function wp_enqueue_style;
+use const DIRECTORY_SEPARATOR;
 
 const CAMEL_CASE    = 'camel';
 const PASCAL_CASE   = 'pascal';
@@ -373,7 +377,7 @@ function enqueue_asset( string $base, array $args = [] ): void {
 
 	$args = [
 		'handle'  => 'blockify-' . $name,
-		'src'     => plugin_dir_url( FILE ) . 'build/' . $base,
+		'src'     => get_asset_url() . 'build/' . $base,
 		'deps'    => [ ...( $args['deps'] ?? [] ), ...get_asset_deps( $name ) ],
 		'version' => $args['version'] ?? get_asset_version( $name ),
 	];
@@ -390,6 +394,19 @@ function enqueue_asset( string $base, array $args = [] ): void {
 	} else if ( $type === 'js' ) {
 		wp_enqueue_script( ...array_values( $args ) );
 	}
+}
+
+/**
+ * Returns either a theme or plugin asset URL.
+ *
+ * @since 1.0.0
+ *
+ * @return string
+ */
+function get_asset_url(): string {
+	$is_plugin = basename( dirname( DIR ) ) === 'plugins';
+
+	return $is_plugin ? plugin_dir_url( FILE ) : get_template_directory_uri() . '/vendor/blockify/plugin/';
 }
 
 /**
@@ -527,14 +544,25 @@ function get_os(): string {
  *
  * @since 0.0.9
  *
- * @param string|null $sub_config
+ * @return array
+ */
+function get_config(): array {
+	$defaults = require __DIR__ . '/config.php';
+	$theme    = get_theme_support( SLUG )[0] ?? [];
+
+	return apply_filters( SLUG, array_merge_recursive( $defaults, $theme ) );
+}
+
+/**
+ * Returns sub config.
+ *
+ * @since 0.0.14
+ *
+ * @param string $sub_config
+ * @param null   $default
  *
  * @return array
  */
-function get_config( string $sub_config = null ): array {
-	$defaults = require __DIR__ . '/config.php';
-	$theme    = get_theme_support( SLUG )[0] ?? [];
-	$config   = apply_filters( SLUG, array_merge_recursive( $defaults, $theme ) );
-
-	return $config[ $sub_config ] ?? $config;
+function get_sub_config( string $sub_config, $default = null ): array {
+	return get_config()[ $sub_config ] ?? $default;
 }

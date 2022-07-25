@@ -6,7 +6,7 @@
  * Description: A lightweight (1kb) block library and toolkit that supercharges Full Site Editing themes.
  * Author:      Blockify
  * Author URI:  https://blockifywp.com/about/
- * Version:     0.0.12
+ * Version:     0.0.13
  * License:     GPLv2-or-Later
  * Text Domain: blockify
  */
@@ -32,22 +32,32 @@ if ( ! version_compare( '7.4.0', PHP_VERSION, '<=' ) ) {
 	return;
 }
 
-add_action( 'plugins_loaded', NS . 'load' );
+add_action( 'plugins_loaded', NS . 'load_textdomain' );
 /**
- * Loads plugin.
+ * Loads text domain if used as plugin.
  *
- * @since 0.0.1
+ * @since 0.0.13
  *
  * @return void
  */
-function load(): void {
+function load_textdomain(): void {
 	load_plugin_textdomain( SLUG );
+}
 
-	require_once DIR . 'vendor/autoload.php';
+add_action( 'after_setup_theme', NS . 'load_includes' );
+/**
+ * Loads includes.
+ *
+ * @since 0.0.13
+ *
+ * @return void
+ */
+function load_includes(): void {
 	require_once DIR . 'includes/utility.php';
 	require_once DIR . 'includes/blocks.php';
 	require_once DIR . 'includes/settings.php';
 	require_once DIR . 'includes/assets.php';
+	require_once DIR . 'includes/patterns.php';
 
 	array_map(
 		fn( $file ) => require_once $file,

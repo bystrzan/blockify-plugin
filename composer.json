@@ -1,6 +1,6 @@
 {
-    "name": "blockify/plugin",
-    "type": "library",
+    "name": "blockify/framework",
+    "type": "package",
     "authors": [
         {
             "name": "Blockify",
@@ -20,14 +20,5 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "composer/installers": true
         }
-    },
-    "autoload": {
-        "files": [
-            "vendor/wptt/webfont-loader/wptt-webfont-loader.php"
-        ],
-        "classmap": []
-    },
-    "require": {
-        "wptt/webfont-loader": "dev-master"
     }
 }
